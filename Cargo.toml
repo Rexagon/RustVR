@@ -1,0 +1,7 @@
+[package]
+name = "RustyVR"
+version = "0.1.0"
+authors = ["Ivan <reide740@gmail.com>"]
+
+[dependencies]
+glium = "*"
