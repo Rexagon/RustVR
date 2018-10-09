@@ -4,10 +4,14 @@ use glium::Surface;
 pub mod scene_manager;
 pub mod vertex;
 
+pub use self::scene_manager::*;
+pub use self::vertex::*;
+
 pub struct Core {
     display: glium::Display,
     event_loop: glutin::EventsLoop,
 
+    scene_manager: SceneManager,
     running: bool,
 }
 
@@ -29,10 +33,13 @@ impl Core {
             Err(err) => panic!(err)
         };
 
+        let scene_manager = SceneManager::new();
+
         Core {
             display,
             event_loop,
-            running: false
+            scene_manager,
+            running: false,
         }
     }
 
@@ -57,5 +64,13 @@ impl Core {
 
             target.finish().unwrap();
         }
+    }
+
+    pub fn display(&mut self) -> &mut glium::Display {
+        &mut self.display
+    }
+
+    pub fn scene_manager(&mut self) -> &mut SceneManager {
+        &mut self.scene_manager
     }
 }

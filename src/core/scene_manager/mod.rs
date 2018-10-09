@@ -9,21 +9,21 @@ pub trait Scene {
 }
 
 pub struct SceneManager {
-    scenes: Vec<Box<Scene>>
+    scenes: Vec<Box<dyn Scene>>
 }
 
 impl SceneManager {
-    pub fn new<T: 'static + Scene>(first_scene: Box<T>) -> SceneManager {
-        let mut scene_manager = SceneManager {
+    pub fn new() -> SceneManager {
+        SceneManager {
             scenes: vec![]
-        };
-
-        scene_manager.add_scene(first_scene);
-
-        scene_manager
+        }
     }
 
-    pub fn add_scene<T: 'static + Scene>(&mut self, scene: Box<T>) {
+    pub fn has_scenes(&self) -> bool {
+        self.scenes.len() > 0
+    }
+
+    pub fn add_scene(&mut self, scene: Box<dyn Scene>) {
         if let Some(last_scene) = self.scenes.last_mut() {
             last_scene.on_leave();
         }
@@ -36,7 +36,7 @@ impl SceneManager {
         }
     }
 
-    pub fn remove_scene<T: 'static + Scene>(&mut self) {
+    pub fn remove_scene(&mut self) {
         if let Some(last_scene) = self.scenes.last_mut() {
             last_scene.on_leave();
             last_scene.on_close();
@@ -46,6 +46,13 @@ impl SceneManager {
 
         if let Some(last_scene) = self.scenes.last_mut() {
             last_scene.on_enter();
+        }
+    }
+
+    pub fn clear(&mut self) {
+        while let Some(mut scene) = self.scenes.pop() {
+            scene.on_leave();
+            scene.on_close();
         }
     }
 }
